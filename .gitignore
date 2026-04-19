@@ -1,0 +1,28 @@
+ # Python
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+
+# Virtual environment
+venv/
+
+# Models (large files)
+backend/models/*.pkl
+
+# Processed data
+backend/data/processed/
+
+# Node
+node_modules/
+frontend/node_modules/
+
+# Build output
+frontend/dist/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# VSCode
+.vscode/
