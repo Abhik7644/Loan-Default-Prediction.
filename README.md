@@ -8,28 +8,35 @@ A two-stage machine learning pipeline that predicts:
 
 ## 📁 Project Structure
 
-​```
+```
 Loan-Default-Prediction/
+│
 ├── backend/
-│   ├── app.py                 # Flask REST API (entry point)
-│   ├── config.py              # Paths, thresholds, hyperparams
-│   ├── Requirements.txt       # Python dependencies
+│   ├── app.py
+│   ├── config.py
+│   ├── Requirements.txt
 │   ├── README.md
+│   │
 │   ├── src/
-│   │   ├── preprocess.py      # Cleaning, encoding, feature engineering
-│   │   ├── train.py           # Trains both models with hyperparameter search
-│   │   ├── predict.py         # Two-stage prediction pipeline
-│   │   └── evaluate.py        # Model comparison + ROC / confusion matrix plots
+│   │   ├── preprocess.py
+│   │   ├── train.py
+│   │   ├── predict.py
+│   │   └── evaluate.py
+│   │
 │   ├── models/
 │   │   ├── default_pipeline.pkl
 │   │   ├── approval_pipeline.pkl
 │   │   ├── roc_comparison.png
 │   │   ├── model_comparison.png
 │   │   └── confusion_matrix.png
+│   │
 │   ├── notebooks/
 │   │   └── Loan_Default_Prediction_model.ipynb
+│   │
 │   ├── data/
-│   │   └── raw/dataset.csv
+│   │   └── raw/
+│   │       └── dataset.csv
+│   │
 │   └── tests/
 │       └── test_predict.py
 │
@@ -47,46 +54,48 @@ Loan-Default-Prediction/
             ├── LoanForm.jsx
             ├── ResultPage.jsx
             └── Dashboard.jsx
-​```
+```
 
 ---
 
 ## ⚙️ Setup
 
+### Backend
+
 ```bash
-pip install -r requirements.txt
+cd backend
+python -m venv venv
+venv\Scripts\activate
+pip install -r Requirements.txt
 ```
 
----
+Train the models (only needed once):
 
-## 🚀 Usage
-
-### 1. Train Models
 ```bash
 python src/train.py
 ```
-Trains and saves both pipelines to `models/`.
 
-### 2. Run Prediction (CLI)
+Start the Flask API:
+
 ```bash
-python src/predict.py
+python app.py
 ```
 
-### 3. Run Web App
+API runs at: **http://localhost:5000**
+
+---
+
+### Frontend
+
+Open a second terminal:
+
 ```bash
-streamlit run app/app.py
+cd frontend
+npm install
+npm run dev
 ```
 
-### 4. Evaluate & Compare Models
-```bash
-python src/evaluate.py
-```
-Saves ROC curves, bar chart, and confusion matrix to `models/`.
-
-### 5. Run Tests
-```bash
-python -m pytest tests/ -v
-```
+UI runs at: **http://localhost:5173**
 
 ---
 
@@ -98,19 +107,19 @@ Applicant Input
       ▼
 ┌─────────────────────────┐
 │  Stage 1: Eligibility   │  Rule-based + ML model
-│  - Grade ≥ F (min grade)│
-│  - DTI ≤ 40%            │  → ❌ Rejected (not eligible)
-│  - Income ≥ $15,000     │
-│  - Revol. util ≤ 90%    │
+│  - Grade >= F           │
+│  - DTI <= 40%           │  →  Rejected (not eligible)
+│  - Income >= $15,000    │
+│  - Revol. util <= 90%   │
 └────────────┬────────────┘
              │ Approved
              ▼
 ┌─────────────────────────┐
 │  Stage 2: Default Risk  │  Random Forest Classifier
 │                         │
-│  Risk Score  (0–100)    │  → ✅ Low Risk    (p < 30%)
-│  Default Probability    │  → ⚠️  Medium Risk (30–55%)
-│                         │  → ❌ High Risk   (p > 55%)
+│  Risk Score  (0-100)    │  →  Low Risk    (p < 30%)
+│  Default Probability    │  →  Medium Risk (30-55%)
+│                         │  →  High Risk   (p > 55%)
 └─────────────────────────┘
 ```
 
@@ -120,15 +129,16 @@ Applicant Input
 
 | Feature | Description |
 |---|---|
-| Two-stage pipeline | Eligibility check → Default risk assessment |
-| Risk score (0–100) | Probability of default converted to an intuitive score |
-| EMI feasibility | Checks if the applicant can afford the monthly EMI |
+| Two-stage pipeline | Eligibility check then default risk assessment |
+| Risk score (0-100) | Probability of default as an intuitive score |
+| EMI feasibility | Checks if applicant can afford the monthly EMI |
 | Loan amount suggestion | Recommends a safer loan amount if request is too large |
-| Feature engineering | `emi_to_income`, `credit_risk_score` derived features |
+| Feature engineering | emi_to_income and credit_risk_score derived features |
 | Model comparison | LR vs Decision Tree vs Random Forest with AUC/F1/Recall |
 | SMOTE balancing | Handles 80/20 class imbalance with oversampling |
-| Streamlit UI | Interactive web form with live predictions |
-| Unit tests | 12 tests covering preprocessing, prediction, and EMI logic |
+| React frontend | Interactive web form with live predictions |
+| Flask REST API | Clean API endpoints consumed by the React frontend |
+| Unit tests | 12 tests covering preprocessing, prediction and EMI logic |
 
 ---
 
@@ -136,51 +146,95 @@ Applicant Input
 
 | Feature | Description |
 |---|---|
-| `grade` | LC-assigned loan grade (A–G) |
-| `annual_inc` | Self-reported annual income |
-| `short_emp` | 1 if employed < 1 year |
-| `emp_length_num` | Employment length in years (0–10) |
-| `home_ownership` | RENT / OWN / MORTGAGE |
-| `dti` | Debt-to-income ratio |
-| `purpose` | Loan purpose (12 categories) |
-| `term` | 36 or 60 months |
-| `last_delinq_none` | 1 if borrower had prior delinquency |
-| `revol_util` | Revolving credit utilisation % |
-| `total_rec_late_fee` | Late fees received to date |
-| `od_ratio` | Obligation-to-debt ratio |
-| `bad_loan` | **Target** — 1 if loan defaulted |
+| grade | LC-assigned loan grade (A-G) |
+| annual_inc | Self-reported annual income |
+| short_emp | 1 if employed less than 1 year |
+| emp_length_num | Employment length in years (0-10) |
+| home_ownership | RENT / OWN / MORTGAGE |
+| dti | Debt-to-income ratio |
+| purpose | Loan purpose (12 categories) |
+| term | 36 or 60 months |
+| last_delinq_none | 1 if borrower had prior delinquency |
+| revol_util | Revolving credit utilisation % |
+| total_rec_late_fee | Late fees received to date |
+| od_ratio | Obligation-to-debt ratio |
+| bad_loan | Target — 1 if loan defaulted |
 
 **Class balance:** 80% non-default / 20% default — handled via SMOTE.
 
 ---
 
-## 🧪 Model Results (100 trees, no tuning)
+## 🧪 Model Results
 
 | Model | Accuracy | F1 | ROC-AUC |
 |---|---|---|---|
 | Logistic Regression | 0.658 | 0.431 | 0.713 |
 | Decision Tree | 0.718 | 0.355 | 0.673 |
-| Random Forest | 0.764 | 0.339 | 0.689 |
-
-> Run `python src/train.py` for full hyperparameter search (achieves F1 ≈ 0.85).
+| Random Forest | 0.764 | 0.371 | 0.702 |
 
 ---
 
-## 🔧 Configuration
+## 🔌 API Reference
 
-All thresholds and paths are in `config.py`:
+### POST /api/predict
 
-```python
-APPROVAL_RULES = {
-    "max_dti":        40.0,
-    "min_annual_inc": 15000.0,
-    "min_grade":      2,          # G=1 rejected, F and above accepted
-    "max_revol_util": 90.0,
-}
-
-RISK_THRESHOLDS = {
-    "low":    0.30,   # p < 30%  → Approve
-    "medium": 0.55,   # 30–55%   → Conditional
-    # above 55%       → Reject
+**Request:**
+```json
+{
+  "grade": "B",
+  "annual_inc": 60000,
+  "short_emp": 0,
+  "emp_length_num": 5,
+  "home_ownership": "RENT",
+  "dti": 15.0,
+  "purpose": "debt_consolidation",
+  "term": " 36 months",
+  "last_delinq_none": 1,
+  "revol_util": 40.0,
+  "total_rec_late_fee": 0.0,
+  "od_ratio": 0.5,
+  "loan_amount": 25000,
+  "term_months": 36
 }
 ```
+
+**Response:**
+```json
+{
+  "approved": true,
+  "approval_prob": 0.98,
+  "default_risk": "Low Risk",
+  "default_prob": 0.12,
+  "risk_score": 12,
+  "verdict": "Approved - Low default risk.",
+  "reasons": [],
+  "emi_info": {
+    "monthly_inc": 5000.0,
+    "current_emi_burden": 750.0,
+    "available_for_emi": 1750.0,
+    "proposed_emi": 830.36,
+    "feasible": true,
+    "recommended_max_loan": 52800.0
+  }
+}
+```
+
+### GET /api/health
+```json
+{ "status": "ok", "message": "Loan Prediction API is running" }
+```
+
+### GET /api/model-stats
+Returns model comparison metrics and dataset info.
+
+---
+
+## 🚀 Common Issues
+
+| Problem | Fix |
+|---|---|
+| CORS error in browser | Make sure Flask is running on port 5000 |
+| Cannot connect to backend | Run python app.py inside backend/ |
+| ModuleNotFoundError | Run pip install -r Requirements.txt with venv active |
+| Model not found | Run python src/train.py first |
+| npm not found | Install Node.js from https://nodejs.org |
