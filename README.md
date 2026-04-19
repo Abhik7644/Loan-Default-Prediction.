@@ -1,7 +1,6 @@
 # 🏦 Loan Default Prediction System
 
 A two-stage machine learning pipeline that predicts:
-
 1. **Loan Eligibility** — Is the applicant eligible for a loan?
 2. **Default Risk** — If approved, what is the probability of default?
 
@@ -9,7 +8,7 @@ A two-stage machine learning pipeline that predicts:
 
 ## 📁 Project Structure
 
-​`
+​```
 Loan-Default-Prediction/
 ├── backend/
 │   ├── app.py                 # Flask REST API (entry point)
@@ -48,7 +47,7 @@ Loan-Default-Prediction/
             ├── LoanForm.jsx
             ├── ResultPage.jsx
             └── Dashboard.jsx
-​`
+​```
 
 ---
 
@@ -63,35 +62,28 @@ pip install -r requirements.txt
 ## 🚀 Usage
 
 ### 1. Train Models
-
 ```bash
 python src/train.py
 ```
-
 Trains and saves both pipelines to `models/`.
 
 ### 2. Run Prediction (CLI)
-
 ```bash
 python src/predict.py
 ```
 
 ### 3. Run Web App
-
 ```bash
 streamlit run app/app.py
 ```
 
 ### 4. Evaluate & Compare Models
-
 ```bash
 python src/evaluate.py
 ```
-
 Saves ROC curves, bar chart, and confusion matrix to `models/`.
 
 ### 5. Run Tests
-
 ```bash
 python -m pytest tests/ -v
 ```
@@ -126,37 +118,37 @@ Applicant Input
 
 ## ✨ Features
 
-| Feature                | Description                                                |
-| ---------------------- | ---------------------------------------------------------- |
-| Two-stage pipeline     | Eligibility check → Default risk assessment                |
-| Risk score (0–100)     | Probability of default converted to an intuitive score     |
-| EMI feasibility        | Checks if the applicant can afford the monthly EMI         |
-| Loan amount suggestion | Recommends a safer loan amount if request is too large     |
-| Feature engineering    | `emi_to_income`, `credit_risk_score` derived features      |
-| Model comparison       | LR vs Decision Tree vs Random Forest with AUC/F1/Recall    |
-| SMOTE balancing        | Handles 80/20 class imbalance with oversampling            |
-| Streamlit UI           | Interactive web form with live predictions                 |
-| Unit tests             | 12 tests covering preprocessing, prediction, and EMI logic |
+| Feature | Description |
+|---|---|
+| Two-stage pipeline | Eligibility check → Default risk assessment |
+| Risk score (0–100) | Probability of default converted to an intuitive score |
+| EMI feasibility | Checks if the applicant can afford the monthly EMI |
+| Loan amount suggestion | Recommends a safer loan amount if request is too large |
+| Feature engineering | `emi_to_income`, `credit_risk_score` derived features |
+| Model comparison | LR vs Decision Tree vs Random Forest with AUC/F1/Recall |
+| SMOTE balancing | Handles 80/20 class imbalance with oversampling |
+| Streamlit UI | Interactive web form with live predictions |
+| Unit tests | 12 tests covering preprocessing, prediction, and EMI logic |
 
 ---
 
 ## 📊 Dataset
 
-| Feature              | Description                         |
-| -------------------- | ----------------------------------- |
-| `grade`              | LC-assigned loan grade (A–G)        |
-| `annual_inc`         | Self-reported annual income         |
-| `short_emp`          | 1 if employed < 1 year              |
-| `emp_length_num`     | Employment length in years (0–10)   |
-| `home_ownership`     | RENT / OWN / MORTGAGE               |
-| `dti`                | Debt-to-income ratio                |
-| `purpose`            | Loan purpose (12 categories)        |
-| `term`               | 36 or 60 months                     |
-| `last_delinq_none`   | 1 if borrower had prior delinquency |
-| `revol_util`         | Revolving credit utilisation %      |
-| `total_rec_late_fee` | Late fees received to date          |
-| `od_ratio`           | Obligation-to-debt ratio            |
-| `bad_loan`           | **Target** — 1 if loan defaulted    |
+| Feature | Description |
+|---|---|
+| `grade` | LC-assigned loan grade (A–G) |
+| `annual_inc` | Self-reported annual income |
+| `short_emp` | 1 if employed < 1 year |
+| `emp_length_num` | Employment length in years (0–10) |
+| `home_ownership` | RENT / OWN / MORTGAGE |
+| `dti` | Debt-to-income ratio |
+| `purpose` | Loan purpose (12 categories) |
+| `term` | 36 or 60 months |
+| `last_delinq_none` | 1 if borrower had prior delinquency |
+| `revol_util` | Revolving credit utilisation % |
+| `total_rec_late_fee` | Late fees received to date |
+| `od_ratio` | Obligation-to-debt ratio |
+| `bad_loan` | **Target** — 1 if loan defaulted |
 
 **Class balance:** 80% non-default / 20% default — handled via SMOTE.
 
@@ -164,11 +156,11 @@ Applicant Input
 
 ## 🧪 Model Results (100 trees, no tuning)
 
-| Model               | Accuracy | F1    | ROC-AUC |
-| ------------------- | -------- | ----- | ------- |
-| Logistic Regression | 0.658    | 0.431 | 0.713   |
-| Decision Tree       | 0.718    | 0.355 | 0.673   |
-| Random Forest       | 0.764    | 0.339 | 0.689   |
+| Model | Accuracy | F1 | ROC-AUC |
+|---|---|---|---|
+| Logistic Regression | 0.658 | 0.431 | 0.713 |
+| Decision Tree | 0.718 | 0.355 | 0.673 |
+| Random Forest | 0.764 | 0.339 | 0.689 |
 
 > Run `python src/train.py` for full hyperparameter search (achieves F1 ≈ 0.85).
 
